@@ -10,16 +10,18 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+
+
 class CampaignController extends Controller
 {
     public function addCampaign(Request $request){
         try{
             $validateUser = Validator::make($request->all(), 
             [
-                'userid' => ['required', 'min:3'],
                 'title' => 'required',
                 'description' => 'required',
                 'price'=> 'required',
+                'duedate' => 'required',
             ]);
 
             if($validateUser->fails()){
@@ -30,7 +32,7 @@ class CampaignController extends Controller
                 ]);
             }
 
-            $user = User::where('userid', $request->userid)->first();
+            $user = User::where('userid', auth()->user()->userid)->first();
 
             if(!$user){
                 return response()->json([
@@ -51,11 +53,12 @@ class CampaignController extends Controller
             $values = [15, 16, 17, 18, 19, 20];
 
             $formid = Str::random(Arr::random($values));
-            $campaign->userid = $request->userid;
+            $campaign->userid = auth()->user()->userid;
             $campaign->formid = $formid;
             $campaign->title = $request->title;
             $campaign->description = $request->description;
             $campaign->price = $request->price;
+            $campaign->duedate = $request->duedate;
             
 
             $result = $campaign->save();
@@ -79,10 +82,10 @@ class CampaignController extends Controller
     }
 
     public function getCampaigns(Request $request){
-        try{
+        try {
             $validateUser = Validator::make($request->all(), 
             [
-                'userid' => ['required', 'min:3'],
+                'userid' => 'required',
             ]);
 
             if($validateUser->fails()){
@@ -93,33 +96,36 @@ class CampaignController extends Controller
                 ]);
             }
 
-            $campaign = Campaign::where('userid', $request->userid)->get();
+            $userid = auth()->user()->userid;
 
-
-                if($campaign){
-                    return response()->json([
-                        "response"=> true,
-                        "campaigns" => $campaign
-                    ]);
-                }else{
-                    return response()->json([
-                        "response"=> false
-                    ]);
-                }
-
-        }catch(\Throwable $th){
+            if(!($request->userid == auth()->user()->userid)){
+                return response()->json([
+                    'response' => false,
+                    'message' => "Wrong token",
+                ]);
+            }
+            $campaigns = Campaign::where('userid', $userid)->get();
+            $count = $campaigns->count();
+    
+            return response()->json([
+                "response" => true,
+                "campaigns" => $campaigns,
+                "count" => $count
+            ], 200);
+    
+        } catch (\Throwable $th) {
             return response()->json([
                 'response' => false,
                 'message' => $th->getMessage()
-            ]);
+            ], 500);
         }
     }
+    
 
-    public function getPaymentMade(Request $request){
+    public function getCampaignStatus(Request $request){
         try{
             $validateUser = Validator::make($request->all(), 
             [
-                'userid' => ['required', 'min:3'],
                 'formid' => 'required'
             ]);
 
@@ -131,15 +137,21 @@ class CampaignController extends Controller
                 ]);
             }
 
-            $campaign = Payment::where('userid', $request->userid)
+            $payment = Payment::where('userid', auth()->user()->userid)
                                 ->where('formid', $request->formid)
                                 ->get();
+                                
+            $campaign = Campaign::where('userid', auth()->user()->userid)
+                                ->where('formid', $request->formid)
+                                ->first();
+                                
 
 
-                if($campaign){
+                if($payment){
                     return response()->json([
                         "response"=> true,
-                        "paymentmade" => $campaign
+                        "paymentmade" => $payment,
+                        "campaign" => $campaign
                     ]);
                 }else{
                     return response()->json([
@@ -159,11 +171,12 @@ class CampaignController extends Controller
         try{
             $validateUser = Validator::make($request->all(), 
             [
-                'userid' => ['required', 'min:3'],
                 'formid' =>['required'],
                 'title' => 'required',
                 'description' => 'required',
                 'price'=> 'required',
+                'duetime'=> 'required',
+                'duedate'=>'required',
             ]);
 
             if($validateUser->fails()){
@@ -175,13 +188,15 @@ class CampaignController extends Controller
             }
 
             $campaign = Campaign::where('formid', $request->formid)
-                                ->where('userid', $request->userid)
+                                ->where('userid', auth()->user()->userid)
                                 ->first();
 
 
             $campaign->title = $request->title;
             $campaign->description = $request->description;
             $campaign->price = $request->price;
+            $campaign->duedate = $request->duedate;
+            $campaign->duetime = $request->duetime;
             
 
             $result = $campaign->save();
@@ -207,7 +222,7 @@ class CampaignController extends Controller
         try{
             $validateUser = Validator::make($request->all(), 
             [
-                'userid' => ['required', 'min:3'],
+                'userid' => 'required',
                 'formid' =>['required'],
             ]);
 
@@ -219,8 +234,16 @@ class CampaignController extends Controller
                 ]);
             }
 
+
+            if(!($request->userid == auth()->user()->userid)){
+                return response()->json([
+                    'response' => false,
+                    'message' => "Wrong token",
+                ]);
+            }
+
             $result = Campaign::where('formid', $request->formid)
-                              ->where('userid', $request->userid)
+                              ->where('userid', auth()->user()->userid)
                               ->delete();
             
 

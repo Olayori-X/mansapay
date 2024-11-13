@@ -28,6 +28,7 @@ class User extends Authenticatable
         'acc_number',
         'acc_name',
         'bank_name',
+        'bank_code',
         'otp'
     ];
 

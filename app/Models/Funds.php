@@ -6,17 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Campaign extends Model
+class Funds extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'paymentlinks';
+    protected $table = 'transactions';
     protected $fillable = [
         'userid',
-        'formid',
-        'title',
-        'description',
-        'price',
-        'duedate'
+        'amount',
+        'reference',
+        'status',
+        'addition'
     ];
 }

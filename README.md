@@ -64,3 +64,11 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+Password = 2PCobmiY2bfb2TDNBBWMKCLeZOcEsgSY
+
+Internal Database URL = postgresql://mansapay:2PCobmiY2bfb2TDNBBWMKCLeZOcEsgSY@dpg-cspsq6t2ng1s7396gg80-a/mansapay
+
+External Database URL = postgresql://mansapay:2PCobmiY2bfb2TDNBBWMKCLeZOcEsgSY@dpg-cspsq6t2ng1s7396gg80-a.oregon-postgres.render.com/mansapay
+
+PSQL command = PGPASSWORD=2PCobmiY2bfb2TDNBBWMKCLeZOcEsgSY psql -h dpg-cspsq6t2ng1s7396gg80-a.oregon-postgres.render.com -U mansapay mansapay

@@ -16,13 +16,13 @@ return [
     */
 
 
-        'paths' => ['api/*', 'sanctum/csrf-cookie'],  // Paths to apply CORS settings
-        'allowed_methods' => ['*'],  // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
-        'allowed_origins' => ['*'],  // Allow requests from all origins, or specify URLs, e.g., ['https://example.com']
-        'allowed_origins_patterns' => [],  // Wildcard pattern for origins, e.g., ['*.example.com']
-        'allowed_headers' => ['*'],  // Allow all headers, or specify necessary headers
-        'exposed_headers' => [],  // Headers to be exposed to the browser
-        'max_age' => 0,  // Cache duration for preflight requests, in seconds
-        'supports_credentials' => true,  // Set to true if you need to send cookies or auth tokens
+        'paths' => ['api/*', 'sanctum/csrf-cookie'],
+        'allowed_methods' => ['*'],
+        'allowed_origins' => ['*'],
+        'allowed_origins_patterns' => [],
+        'allowed_headers' => ['*'],
+        'exposed_headers' => [],
+        'max_age' => 0,
+        'supports_credentials' => true,
     ];
     

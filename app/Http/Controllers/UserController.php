@@ -81,9 +81,8 @@ class UserController extends Controller
                 'userid' => 'required'
             ]);
 
-            $userid = $request->input('userid');
-            $otp = $request->input('otp');
-            $code = Hash::make($otp);
+            $userid = $request->userid;
+            $otp = $request->otp;
 
             if($validateInput->fails()){
                 return response()->json([
@@ -97,8 +96,7 @@ class UserController extends Controller
 
                     
             if ($user && Hash::check($otp, $user->otp)) {
-                // Update the email_verified_at field to the current timestamp
-                $user->email_verified_at = Carbon::now(); // You can use now() helper as well: now()
+                $user->email_verified_at = Carbon::now();
             
                 // Save the updated user model to the database
                 $user->save();
@@ -107,14 +105,14 @@ class UserController extends Controller
                 return response()->json(['status' => true, 'message' => 'Email verified successfully']);
             } else {
                 // Handle the case where the user was not found
-                return response()->json(['status' => false, 'message' => 'Invalid username or OTP', 'code' => $code, 'name' => $userid, 'otp' => $otp]);
+                return response()->json(['status' => false, 'message' => 'Invalid username or OTP', 'name' => $userid,]);
             }
 
         }catch(\Throwable $th){
             return response()->json([
                 'response' => false,
                 'message' => $th->getMessage()
-            ]);
+            ], 500);
         }
     }
 
@@ -204,6 +202,7 @@ class UserController extends Controller
                 'bankname' => 'required',
                 'accountnumber' => 'required',
                 'accountname'=> 'required',
+                'bankcode' => 'required',
             ]);
 
             if($validateUser->fails()){
@@ -218,13 +217,15 @@ class UserController extends Controller
 
 
             $user->bank_name = $request->bankname;
+            $user->bank_code = $request->bankcode;
             $user->acc_number = $request->accountnumber;
             $user->acc_name = $request->accountname;
 
             $result = $user->save();
                 if($result){
                     return response()->json([
-                        "response"=> true
+                        "response" => true,
+                        "message" => "Successful"
                     ]);
                 }else{
                     return response()->json([
@@ -244,7 +245,7 @@ class UserController extends Controller
         try{
             $validateUser = Validator::make($request->all(), 
             [
-                'userid' => ['required', 'min:3'],
+                'userid' => 'required',
             ]);
 
             if($validateUser->fails()){
@@ -255,7 +256,14 @@ class UserController extends Controller
                 ]);
             }
 
-            $user = User::where('userid', $request->userid)->first();
+            if(!($request->userid == auth()->user()->userid)){
+                return response()->json([
+                    'response' => false,
+                    'message' => "Wrong token",
+                ]);
+            }
+
+            $user = User::where('userid', auth()->user()->userid)->first();
 
                 if($user){
                     return response()->json([
