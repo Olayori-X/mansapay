@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('acc_number');
             $table->string('acc_name');
             $table->string('bank_name');
+            $table->string('bank_code');
             $table->string('otp');
             $table->string('password');
             $table->rememberToken();

@@ -18,16 +18,30 @@ return new class extends Migration
             $table->string('title');
             $table->string('description');
             $table->string('price');
+            $table->dateTime('duedate');
             $table->timestamps();
         });
 
         Schema::create('paymentmade', function (Blueprint $table) {
             $table->id();
             $table->string('userid');
-            $table->string('formid')->unique();
+            $table->string('formid');
             $table->string('payer_name');
             $table->string('payer_email');
             $table->string('reference');
+            $table->bool('paid');
+            $table->timestamps();
+        });
+
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->string('userid');
+            $table->string('campaignid');
+            $table->string('beneficiary');
+            $table->string('amount');
+            $table->string('reference');
+            $table->string('status');
+            $table->bool('addition');
             $table->timestamps();
         });
     }
