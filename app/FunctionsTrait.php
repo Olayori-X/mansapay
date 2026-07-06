@@ -8,7 +8,7 @@ trait FunctionsTrait
 {
     public function sendPostRequest($url, $data){
         try{
-            $api = base64_encode("PZ78-PKTEST-748D46CE-9ADA-4F0D-95E9-F4C4452FD279");
+            $api = base64_encode("PAYAZA API KEY");
             $response = Http::withHeaders([
                 "Authorization" => "Payaza {$api}",
                 "Content-Type" => "application/json",
